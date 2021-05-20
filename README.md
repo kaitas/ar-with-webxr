@@ -46,26 +46,26 @@ This is a work in progress (and its fork itself). If you find a mistake or have 
 
 # プロジェクトの中身と解説
 
+Google の開発者による解説に沿って進めます。
+
 ### workshop/index.html
 
 workshop/index.html
 
 ```
-
 <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
 <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
-
 ```
 
 `material components` ライブラリと、`three.js` ライブラリ、`GLTFLoader.js` を使っています。
 
 workshop/index.html
 
- <a id="enter-ar" class="mdc-button mdc-button--raised mdc-button--accent">
- Start augmented reality
- </a>
-
+```
+<a id="enter-ar" class="mdc-button mdc-button--raised mdc-button--accent">
+Start augmented reality
+</a>
 ```
 
 &lt; a&gt; タグで[AR 開始]ボタンを用意
@@ -75,7 +75,6 @@ workshop/index.html
 workshop/index.html
 
 ```
-
 /\*
 
 - WebXR のサポートを問い合わせる。もし `immersive-ar` モードがサポートされていない場合はエラーを表示。
@@ -91,7 +90,6 @@ workshop/index.html
   onNoXRDevice();
   }
   })();
-
 ```
 
 ### 開発用 Web サーバと実機デバッグの設定
@@ -104,4 +102,3 @@ workshop/index.html
 6. DevTools の `Remote Target` (実機) の Chrome `Open Tab with URL` の欄に、上記の URL(`http://127.0.0.1:8887/workshop/`) を貼り付けて `Open` します。実機の Chrome で該当のページが表示されます。
 7. `inspect` を押すと、DevTools のウインドウ にもその様子が表示されます（ `Unsupported Browser`と出ている）
 8. DevTools の `Sources` タブで `Page`でページツリーを表示させながら、デバッグするといいですね。
-```
