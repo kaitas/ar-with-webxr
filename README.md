@@ -6,13 +6,13 @@ This code is a Japanese translated fork from the original resources in codelab [
 
 This is a work in progress (and its fork itself). If you find a mistake or have a suggestion, please [file an issue](https://github.com/googlecodelabs/ar-with-webxr/issues). Thanks!
 
-## ここで学ぶこと
+## このプロジェクトで学べること
 
 - WebXR Device API の使用方法
 - 拡張現実（AR）のヒットテストを利用した面の見つけ方
 - 現実世界のカメラフィードと同期した 3D モデルのロードとレンダリングの方法
 
-# What you'll need
+## What you'll need
 
 - A workstation for coding and hosting static web content
 - [ARCore-capable Android device](https://developers.google.com/ar/discover/#supported_devices)
@@ -44,10 +44,6 @@ This is a work in progress (and its fork itself). If you find a mistake or have 
 
 これなら Chromebook でもいけるかもしれんね！
 
-Github リポジトリはこちら
-https://github.com/googlecodelabs/ar-with-webxr
-ライセンスは Apache 2.0
-
 # プロジェクトの中身と解説
 
 ### workshop/index.html
@@ -66,24 +62,24 @@ workshop/index.html
 
 workshop/index.html
 
-```
-
-<a id="enter-ar" class="mdc-button mdc-button--raised mdc-button--accent">
-Start augmented reality
-</a>
+ <a id="enter-ar" class="mdc-button mdc-button--raised mdc-button--accent">
+ Start augmented reality
+ </a>
 
 ```
 
-<&lt; a&gt; タグで[AR 開始]ボタンを用意
+&lt; a&gt; タグで[AR 開始]ボタンを用意
 
 ### workshop/app.js
 
 workshop/index.html
 
 ```
-/*
+
+/\*
+
 - WebXR のサポートを問い合わせる。もし `immersive-ar` モードがサポートされていない場合はエラーを表示。
-*/
+  \*/
   (async function() {
   const isArSessionSupported =
   navigator.xr &&
@@ -95,6 +91,7 @@ workshop/index.html
   onNoXRDevice();
   }
   })();
+
 ```
 
 ### 開発用 Web サーバと実機デバッグの設定
@@ -107,3 +104,4 @@ workshop/index.html
 6. DevTools の `Remote Target` (実機) の Chrome `Open Tab with URL` の欄に、上記の URL(`http://127.0.0.1:8887/workshop/`) を貼り付けて `Open` します。実機の Chrome で該当のページが表示されます。
 7. `inspect` を押すと、DevTools のウインドウ にもその様子が表示されます（ `Unsupported Browser`と出ている）
 8. DevTools の `Sources` タブで `Page`でページツリーを表示させながら、デバッグするといいですね。
+```
