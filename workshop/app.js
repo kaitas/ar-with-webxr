@@ -16,6 +16,9 @@
 /**
  * Query for WebXR support. If there's no support for the `immersive-ar` mode,
  * show an error.
+ * WebXR サポートを問い合わせて `immersive-ar` モードがないときはエラーを表示する。
+ * この辺りの詳細は Mozilla MDN に日本語ドキュメントあります
+ * [WebXR Device API](https://developer.mozilla.org/ja/docs/Web/API/XRSystem)
  */
 (async function() {
   const isArSessionSupported =
@@ -32,25 +35,31 @@
 /**
  * Container class to manage connecting to the WebXR Device API
  * and handle rendering on every frame.
+ * WebXR Device APIへの接続を管理し、各フレームでのレンダリングを処理するコンテナクラスです。
  */
 class App {
   /**
    * Run when the Start AR button is pressed.
+   * [Start AR button]が押されたときの処理。後でコメントを外していきます。
    */
   activateXR = async () => {
     try {
       /** Initialize a WebXR session using "immersive-ar". */
-      // this.xrSession = await navigator.xr.requestSession("immersive-ar");
+      this.xrSession = await navigator.xr.requestSession("immersive-ar");
       /** Alternatively, initialize a WebXR session using extra required features. */
       // this.xrSession = await navigator.xr.requestSession("immersive-ar", {
       //   requiredFeatures: ['hit-test', 'dom-overlay'],
       //   domOverlay: { root: document.body }
       // });
 
-      /** Create the canvas that will contain our camera's background and our virtual scene. */
+      /** Create the canvas that will contain our camera's background and our virtual scene. 
+       * カメラの背景とバーチャルシーンを格納するキャンバス(Canvas)を作成します。
+      */
       this.createXRCanvas();
 
-      /** With everything set up, start the app. */
+      /** With everything set up, start the app. 
+       * すべての設定が完了したら、アプリを起動します。
+      */
       await this.onSessionStarted();
     } catch(e) {
       console.log(e);
@@ -60,6 +69,7 @@ class App {
 
   /**
    * Add a canvas element and initialize a WebGL context that is compatible with WebXR.
+   * canvas 要素を追加し、WebXR と互換性のある WebGL コンテキストを初期化します。
    */
   createXRCanvas() {
     this.canvas = document.createElement("canvas");
@@ -75,16 +85,21 @@ class App {
    * Called when the XRSession has begun. Here we set up our three.js
    * renderer, scene, and camera and attach our XRWebGLLayer to the
    * XRSession and kick off the render loop.
+   * XRSessionが始まったときに呼び出されます。
+   * three.js のレンダラー、シーン、カメラを設定し、
+   * XRWebGLLayer を XRSession にアタッチして、レンダリングループを開始します。
    */
   onSessionStarted = async () => {
-    /** Add the `ar` class to our body, which will hide our 2D components. */
+    /** Add the `ar` class to our body, which will hide our 2D components. 
+     * `ar` クラスを追加して、2Dコンポーネントを隠します。
+    */
     document.body.classList.add('ar');
 
-    /** To help with working with 3D on the web, we'll use three.js. */
+    /** To help with working with 3D on the web, we'll use three.js.  */
     this.setupThreeJs();
 
     /** Setup an XRReferenceSpace using the "local" coordinate system. */
-    // this.localReferenceSpace = await this.xrSession.requestReferenceSpace('local');
+    this.localReferenceSpace = await this.xrSession.requestReferenceSpace('local');
 
     /** Create another XRReferenceSpace that has the viewer as the origin. */
     // this.viewerSpace = await this.xrSession.requestReferenceSpace('viewer');
@@ -101,30 +116,45 @@ class App {
   /**
    * Called on the XRSession's requestAnimationFrame.
    * Called with the time and XRPresentationFrame.
+   * XRSessionのrequestAnimationFrameで呼び出されます。
+   * 時間とXRPresentationFrameを指定して呼び出されます。
    */
   onXRFrame = (time, frame) => {
-    /** Queue up the next draw request. */
-    // this.xrSession.requestAnimationFrame(this.onXRFrame);
+    /** Queue up the next draw request. 
+    * 次の描画要求をキューイング（待ち列に入れる）します。
+    */
+    this.xrSession.requestAnimationFrame(this.onXRFrame);
 
-    /** Bind the graphics framebuffer to the baseLayer's framebuffer. */
-    // const framebuffer = this.xrSession.renderState.baseLayer.framebuffer
-    // this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer)
-    // this.renderer.setFramebuffer(framebuffer);
+    /** Bind the graphics framebuffer to the baseLayer's framebuffer. 
+    * グラフィックスのフレームバッファをbaseLayerのフレームバッファにバインドする。
+    */
+    const framebuffer = this.xrSession.renderState.baseLayer.framebuffer
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer)
+    this.renderer.setFramebuffer(framebuffer);
 
     /** Retrieve the pose of the device.
-     * XRFrame.getViewerPose can return null while the session attempts to establish tracking. */
-    // const pose = frame.getViewerPose(this.localReferenceSpace);
-    // if (pose) {
-    //   /** In mobile AR, we only have one view. */
-    //   const view = pose.views[0];
-    //
-    //   const viewport = this.xrSession.renderState.baseLayer.getViewport(view);
-    //   this.renderer.setSize(viewport.width, viewport.height)
-    //
-    //   /** Use the view's transform matrix and projection matrix to configure the THREE.camera. */
-    //   this.camera.matrix.fromArray(view.transform.matrix)
-    //   this.camera.projectionMatrix.fromArray(view.projectionMatrix);
-    //   this.camera.updateMatrixWorld(true);
+     * XRFrame.getViewerPose can return null while the session attempts to establish tracking.
+     * デバイスのポーズを取得します。
+     * XRFrame.getViewerPoseは、セッションがトラッキングを確立させる間、nullを返すことがあります。
+     */
+    const pose = frame.getViewerPose(this.localReferenceSpace);
+    if (pose) {
+      /** In mobile AR, we only have one view. 
+       * モバイルARの場合はビューは1つしかありません（VRヘッドセットの場合は左右眼で2つ）。
+      */
+      const view = pose.views[0];
+    
+      /** ベースレイヤーのビューポート（視界用の窓）を取得して、そのサイズをレンダラーにセットします。*/
+      const viewport = this.xrSession.renderState.baseLayer.getViewport(view);
+      this.renderer.setSize(viewport.width, viewport.height)
+    
+      /** Use the view's transform matrix and projection matrix to configure the THREE.camera.
+       * THREE.cameraの設定には、ビューの変換行列(transform)と投影行列(projection)を使用します。
+       * これで物理的なカメラとバーチャルカメラが接続されたことになります。
+       */
+      this.camera.matrix.fromArray(view.transform.matrix)
+      this.camera.projectionMatrix.fromArray(view.projectionMatrix);
+      this.camera.updateMatrixWorld(true);
     //
     //   /** Conduct hit test. */
     //   const hitTestResults = frame.getHitTestResults(this.hitTestSource);
@@ -142,18 +172,23 @@ class App {
     //     this.reticle.position.set(hitPose.transform.position.x, hitPose.transform.position.y, hitPose.transform.position.z)
     //     this.reticle.updateMatrixWorld(true);
     //   }
-    //   /** Render the scene with THREE.WebGLRenderer. */
-    //   this.renderer.render(this.scene, this.camera)
-    // }
+      /** Render the scene with THREE.WebGLRenderer. */
+      this.renderer.render(this.scene, this.camera)
+    }
   }
 
   /**
    * Initialize three.js specific rendering code, including a WebGLRenderer,
    * a demo scene, and a camera for viewing the 3D content.
+   * WebGLRendererを含む、three.js固有のレンダリングコードの初期化。
+   * デモシーン、3Dコンテンツを見るためのカメラなどのレンダリングコードを初期化します。
    */
   setupThreeJs() {
     /** To help with working with 3D on the web, we'll use three.js.
-     * Set up the WebGLRenderer, which handles rendering to our session's base layer. */
+     * Set up the WebGLRenderer, which handles rendering to our session's base layer. 
+     * Web上での3D作業を支援するために、three.jsを使用します。
+     * WebGLRendererを設定し、セッションのベースレイヤーへのレンダリングを処理します。
+     */
     this.renderer = new THREE.WebGLRenderer({
       alpha: true,
       preserveDrawingBuffer: true,
@@ -164,7 +199,9 @@ class App {
     // this.renderer.shadowMap.enabled = true;
     // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    /** Initialize our demo scene. */
+    /** Initialize our demo scene.
+     *  デモ用のキューブを描画するシーンを初期化。後でコメントアウト。
+     */
     this.scene = DemoUtils.createCubeScene();
     // this.scene = DemoUtils.createLitScene();
     // this.reticle = new Reticle();
@@ -172,7 +209,9 @@ class App {
 
     /** We'll update the camera matrices directly from API, so
      * disable matrix auto updates so three.js doesn't attempt
-     * to handle the matrices independently. */
+     * to handle the matrices independently. 
+     * カメラの行列はAPIから直接更新します。行列の自動更新を無効にして、
+     * three.jsが行列を個別に処理しようとしないようにしておきます。*/
     this.camera = new THREE.PerspectiveCamera();
     this.camera.matrixAutoUpdate = false;
   }
