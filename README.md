@@ -308,5 +308,14 @@ WebGLRenderer を設定し、セッションのベースレイヤーへのレン
 [https://akihiko.shirai.as/ar-with-webxr/](https://akihiko.shirai.as/ar-with-webxr/)
 （あとで消しちゃうかも？）
 
+[Mozilla の WebXR サポート情報](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API#browser_compatibility)によるといろんなブラウザで動きそうなのですが、
+確実な動作環境としては Android の対応です。Android 7.0（Nougat）以降、具体的な機種リストは[こちら](https://developers.google.com/ar/devices)。<br>
+iOS は Chrome, Safari, Firefox, Edge ともダメっぽかった。残念。<br>
+
 続きは、当たり判定です！
 解説動画の[28:16](https://youtu.be/gAzIkjkJSzM?t=1696)あたりです。
+
+好きなモデルデータも選んでおきたい
+
+関連：モデルビューワー
+[https://modelviewer.dev/](https://modelviewer.dev/)
