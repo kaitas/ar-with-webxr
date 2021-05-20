@@ -303,5 +303,10 @@ WebGLRenderer を設定し、セッションのベースレイヤーへのレン
 ここまできたらリロードしましょう！
 実機で AR が動いているのを見れるはずです（ケーブル短くていい絵が撮れなかった）。
 
+せっかくなので動く WebAR のシーンにしておきました
+お手持ちのスマホでアクセスしてみて下さい
+[https://akihiko.shirai.as/ar-with-webxr/](https://akihiko.shirai.as/ar-with-webxr/)
+（あとで消しちゃうかも？）
+
 続きは、当たり判定です！
 解説動画の[28:16](https://youtu.be/gAzIkjkJSzM?t=1696)あたりです。
